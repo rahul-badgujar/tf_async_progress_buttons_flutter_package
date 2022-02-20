@@ -41,7 +41,7 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            TfAsyncProgressButton(
+            /* TfAsyncProgressButton(
               width: 120,
               height: 40,
               actionInitWidget: Text('Connect'),
@@ -55,10 +55,7 @@ class _MyHomePageState extends State<MyHomePage> {
               actionCallback: () async {
                 await connectToServer();
               },
-              actionReversedCallback: () async {
-                await connectToServer();
-              },
-            ),
+            ), */
           ],
         ),
       ),
