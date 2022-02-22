@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:tf_async_progress_button/src/tf_async_progress_base_button_impl.dart';
 
@@ -14,8 +15,10 @@ class TfAsyncProgressElevatedButton extends TfAsyncProgressBaseButton {
     Widget actionInProgressButtonChild = const Text('Init'),
     Widget actionCompleteButtonChild = const Text('Init'),
     Size size = const Size(100, 50),
-    required Future Function() action,
-    required Future Function() undoAction,
+    required AsyncValueGetter action,
+    required AsyncValueGetter undoAction,
+    Function(dynamic)? onActionErrored,
+    Function(dynamic)? onUndoActionErrored,
   }) : super(
           key: key,
           focusNode: focusNode,
@@ -30,6 +33,8 @@ class TfAsyncProgressElevatedButton extends TfAsyncProgressBaseButton {
           size: size,
           action: action,
           undoAction: undoAction,
+          onActionErrored: onActionErrored,
+          onUndoActionErrored: onUndoActionErrored,
         );
 
   @override

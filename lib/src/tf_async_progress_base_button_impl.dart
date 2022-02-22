@@ -5,7 +5,6 @@ enum TfAsyncProgressButtonStates {
   yetToInit,
   inProgress,
   completed,
-  // TODO: add errored status
 }
 
 abstract class TfAsyncProgressBaseButton extends StatelessWidget {
@@ -23,6 +22,8 @@ abstract class TfAsyncProgressBaseButton extends StatelessWidget {
     this.size = const Size(50, 100),
     required this.action,
     required this.undoAction,
+    this.onActionErrored,
+    this.onUndoActionErrored,
   }) : super(key: key);
 
   // properties related to basic flutter buttons implementation
@@ -47,6 +48,10 @@ abstract class TfAsyncProgressBaseButton extends StatelessWidget {
   final AsyncValueGetter action;
   final AsyncValueGetter undoAction;
 
+  // on error handlers
+  final Function(dynamic)? onActionErrored;
+  final Function(dynamic)? onUndoActionErrored;
+
   // value notifiers
   final ValueNotifier<TfAsyncProgressButtonStates> buttonStateNotifier =
       ValueNotifier(TfAsyncProgressButtonStates.yetToInit);
@@ -62,22 +67,32 @@ abstract class TfAsyncProgressBaseButton extends StatelessWidget {
 
   Future<dynamic> onActionInit() async {
     assert(buttonState == TfAsyncProgressButtonStates.yetToInit);
-    // put the button in progress state
-    buttonState = TfAsyncProgressButtonStates.inProgress;
-    final result = await action.call();
-    // put the button in progress state
-    buttonState = TfAsyncProgressButtonStates.completed;
-    return result;
+    try {
+      // put the button in progress state
+      buttonState = TfAsyncProgressButtonStates.inProgress;
+      final result = await action.call();
+      // put the button in progress state
+      buttonState = TfAsyncProgressButtonStates.completed;
+      return result;
+    } catch (e) {
+      buttonState = TfAsyncProgressButtonStates.yetToInit;
+      onActionErrored?.call(e);
+    }
   }
 
   Future<dynamic> onUndoActionInit() async {
     assert(buttonState == TfAsyncProgressButtonStates.completed);
-    // put the button in progress state
-    buttonState = TfAsyncProgressButtonStates.inProgress;
-    final result = await action.call();
-    // put the button in progress state
-    buttonState = TfAsyncProgressButtonStates.yetToInit;
-    return result;
+    try {
+      // put the button in progress state
+      buttonState = TfAsyncProgressButtonStates.inProgress;
+      final result = await action.call();
+      // put the button in progress state
+      buttonState = TfAsyncProgressButtonStates.yetToInit;
+      return result;
+    } catch (e) {
+      buttonState = TfAsyncProgressButtonStates.completed;
+      onUndoActionErrored?.call(e);
+    }
   }
 
   set buttonState(TfAsyncProgressButtonStates updatedState) {
