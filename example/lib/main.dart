@@ -49,7 +49,13 @@ class _MyHomePageState extends State<MyHomePage> {
               action: connectToServer,
               undoAction: connectToServer,
               actionInitButtonChild: const Text('Connect'),
-              actionInProgressButtonChild: const Text('Wait'),
+              actionInProgressButtonChild: const Padding(
+                padding: EdgeInsets.all(8.0),
+                child: AspectRatio(
+                  aspectRatio: 1,
+                  child: CircularProgressIndicator(),
+                ),
+              ),
               actionCompleteButtonChild: const Text('Disconnect'),
               size: const Size(120, 40),
               actionInitButtonStyle: ButtonStyle(
