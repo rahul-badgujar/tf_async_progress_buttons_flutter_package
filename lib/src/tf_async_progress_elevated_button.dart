@@ -17,8 +17,8 @@ class TfAsyncProgressElevatedButton extends TfAsyncProgressBaseButton {
     Size size = const Size(100, 50),
     required AsyncValueGetter action,
     required AsyncValueGetter undoAction,
-    Function(dynamic)? onActionErrored,
-    Function(dynamic)? onUndoActionErrored,
+    Function(dynamic resultOrError, bool isError)? onActionResulted,
+    Function(dynamic resultOrError, bool isError)? onUndoActionResulted,
   }) : super(
           key: key,
           focusNode: focusNode,
@@ -33,8 +33,8 @@ class TfAsyncProgressElevatedButton extends TfAsyncProgressBaseButton {
           size: size,
           action: action,
           undoAction: undoAction,
-          onActionErrored: onActionErrored,
-          onUndoActionErrored: onUndoActionErrored,
+          onActionResulted: onActionResulted,
+          onUndoActionResulted: onUndoActionResulted,
         );
 
   @override

@@ -21,9 +21,9 @@ abstract class TfAsyncProgressBaseButton extends StatelessWidget {
     this.actionDoneButtonChild = const Text('Undo'),
     this.size = const Size(50, 100),
     required this.action,
-    required this.undoAction,
-    this.onActionErrored,
-    this.onUndoActionErrored,
+    this.undoAction,
+    this.onActionResulted,
+    this.onUndoActionResulted,
   }) : super(key: key);
 
   // properties related to basic flutter buttons implementation
@@ -46,17 +46,17 @@ abstract class TfAsyncProgressBaseButton extends StatelessWidget {
 
   // async callbacks to do and undo action
   final AsyncValueGetter action;
-  final AsyncValueGetter undoAction;
+  final AsyncValueGetter? undoAction;
 
   // on error handlers
-  final Function(dynamic)? onActionErrored;
-  final Function(dynamic)? onUndoActionErrored;
+  final Function(dynamic resultOrError, bool isError)? onActionResulted;
+  final Function(dynamic resultOrError, bool isError)? onUndoActionResulted;
 
   // value notifiers
   final ValueNotifier<TfAsyncProgressButtonStates> buttonStateNotifier =
       ValueNotifier(TfAsyncProgressButtonStates.yetToInit);
 
-  Future Function()? get onButtonPressedCallback {
+  VoidCallback? get onButtonPressedCallback {
     if (buttonState == TfAsyncProgressButtonStates.yetToInit) {
       return onActionInit;
     } else if (buttonState == TfAsyncProgressButtonStates.completed) {
@@ -65,7 +65,7 @@ abstract class TfAsyncProgressBaseButton extends StatelessWidget {
     return null;
   }
 
-  Future<dynamic> onActionInit() async {
+  Future<void> onActionInit() async {
     assert(buttonState == TfAsyncProgressButtonStates.yetToInit);
     try {
       // put the button in progress state
@@ -73,25 +73,35 @@ abstract class TfAsyncProgressBaseButton extends StatelessWidget {
       final result = await action.call();
       // put the button in progress state
       buttonState = TfAsyncProgressButtonStates.completed;
-      return result;
+      // report the result without any error
+      onActionResulted?.call(result, false);
     } catch (e) {
       buttonState = TfAsyncProgressButtonStates.yetToInit;
-      onActionErrored?.call(e);
+      // report exception flagging result is exception
+      onActionResulted?.call(e, true);
     }
   }
 
-  Future<dynamic> onUndoActionInit() async {
+  Future<void> onUndoActionInit() async {
     assert(buttonState == TfAsyncProgressButtonStates.completed);
     try {
-      // put the button in progress state
-      buttonState = TfAsyncProgressButtonStates.inProgress;
-      final result = await action.call();
-      // put the button in progress state
-      buttonState = TfAsyncProgressButtonStates.yetToInit;
-      return result;
+      // if undo action is specified, then perform it and return result
+      if (undoAction != null) {
+        // put the button in progress state
+        buttonState = TfAsyncProgressButtonStates.inProgress;
+        final result = await undoAction?.call();
+        // put the button in yet to complete state
+        buttonState = TfAsyncProgressButtonStates.yetToInit;
+        // report the result without any error
+        onUndoActionResulted?.call(result, false);
+      } else {
+        // put the button in yet to complete state
+        buttonState = TfAsyncProgressButtonStates.yetToInit;
+      }
     } catch (e) {
       buttonState = TfAsyncProgressButtonStates.completed;
-      onUndoActionErrored?.call(e);
+      // report exception flagging result is exception
+      onUndoActionResulted?.call(e, true);
     }
   }
 

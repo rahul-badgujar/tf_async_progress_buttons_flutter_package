@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'dart:math';
 
 import 'package:flutter/material.dart';
@@ -59,11 +61,19 @@ class _MyHomePageState extends State<MyHomePage> {
               actionDoneButtonStyle: ButtonStyle(
                 backgroundColor: MaterialStateProperty.all<Color>(Colors.red),
               ),
-              onActionErrored: (e) {
-                print('Error: $e');
+              onActionResulted: (result, isError) {
+                if (isError) {
+                  print('Error in action: $result');
+                } else {
+                  print('Result in action: $result');
+                }
               },
-              onUndoActionErrored: (e) {
-                print('Error: $e');
+              onUndoActionResulted: (result, isError) {
+                if (isError) {
+                  print('Error in undo action: $result');
+                } else {
+                  print('Result in undo action: $result');
+                }
               },
             ),
           ],
@@ -72,12 +82,13 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  Future<void> connectToServer() async {
+  Future<int> connectToServer() async {
     final task = Future.delayed(const Duration(seconds: 2));
     await task;
     final randInt = Random().nextInt(3);
     if (randInt == 0) {
       throw Exception('Manually generated error for testing');
     }
+    return randInt;
   }
 }
