@@ -12,7 +12,7 @@ class TfAsyncProgressElevatedButton extends TfAsyncProgressBaseButton {
     ButtonStyle? actionDoneButtonStyle,
     Widget actionInitButtonChild = const Text('Init'),
     Widget actionInProgressButtonChild = const Text('Init'),
-    Widget actionDoneButtonChild = const Text('Init'),
+    Widget actionCompleteButtonChild = const Text('Init'),
     Size size = const Size(100, 50),
     required Future Function() action,
     required Future Function() undoAction,
@@ -26,7 +26,7 @@ class TfAsyncProgressElevatedButton extends TfAsyncProgressBaseButton {
           actionDoneButtonStyle: actionDoneButtonStyle,
           actionInitButtonChild: actionInitButtonChild,
           actionInProgressButtonChild: actionInProgressButtonChild,
-          actionDoneButtonChild: actionDoneButtonChild,
+          actionDoneButtonChild: actionCompleteButtonChild,
           size: size,
           action: action,
           undoAction: undoAction,
@@ -34,13 +34,18 @@ class TfAsyncProgressElevatedButton extends TfAsyncProgressBaseButton {
 
   @override
   Widget build(BuildContext context) {
-    return ElevatedButton(
-      onPressed: onButtonPressedCallback,
-      child: childWidget,
-      autofocus: autofocus,
-      clipBehavior: clipBehavior,
-      focusNode: focusNode,
-      style: buttonStyle,
+    return ValueListenableBuilder(
+      valueListenable: buttonStateNotifier,
+      builder: (context, buttonStateValue, _) {
+        return ElevatedButton(
+          onPressed: onButtonPressedCallback,
+          child: childWidget,
+          autofocus: autofocus,
+          clipBehavior: clipBehavior,
+          focusNode: focusNode,
+          style: buttonStyle,
+        );
+      },
     );
   }
 }

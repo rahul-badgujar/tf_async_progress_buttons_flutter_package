@@ -41,21 +41,23 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            /* TfAsyncProgressButton(
-              width: 120,
-              height: 40,
-              actionInitWidget: Text('Connect'),
-              actionCompletedWidget: Text('Disconnect'),
-              buttonStyleInitial: ButtonStyle(
+            TfAsyncProgressElevatedButton(
+              action: connectToServer,
+              undoAction: connectToServer,
+              actionInitButtonChild: const Text('Connect'),
+              actionInProgressButtonChild: const Text('Wait'),
+              actionCompleteButtonChild: const Text('Disconnect'),
+              size: const Size(120, 40),
+              actionInitButtonStyle: ButtonStyle(
                 backgroundColor: MaterialStateProperty.all<Color>(Colors.green),
               ),
-              buttonStyleOnActionComplete: ButtonStyle(
+              actionInProgressButtonStyle: ButtonStyle(
+                backgroundColor: MaterialStateProperty.all<Color>(Colors.grey),
+              ),
+              actionDoneButtonStyle: ButtonStyle(
                 backgroundColor: MaterialStateProperty.all<Color>(Colors.red),
               ),
-              actionCallback: () async {
-                await connectToServer();
-              },
-            ), */
+            ),
           ],
         ),
       ),
@@ -63,7 +65,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Future<void> connectToServer() async {
-    final task = Future.delayed(Duration(seconds: 2));
+    final task = Future.delayed(const Duration(seconds: 2));
     await task;
   }
 }

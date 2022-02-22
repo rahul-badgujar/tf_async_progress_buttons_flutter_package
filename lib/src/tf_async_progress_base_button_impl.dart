@@ -1,10 +1,11 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-enum TfActionStatus {
+enum TfAsyncProgressButtonStates {
   yetToInit,
   inProgress,
   completed,
-  errored,
+  // TODO: add errored status
 }
 
 abstract class TfAsyncProgressBaseButton extends StatelessWidget {
@@ -43,28 +44,74 @@ abstract class TfAsyncProgressBaseButton extends StatelessWidget {
   final Size? size;
 
   // async callbacks to do and undo action
-  final Future Function() action;
-  final Future Function() undoAction;
+  final AsyncValueGetter action;
+  final AsyncValueGetter undoAction;
 
   // value notifiers
-  final ValueNotifier<TfActionStatus?> actionStateNotifier =
-      ValueNotifier(null);
-  final ValueNotifier<TfActionStatus?> undoActionStateNotifier =
-      ValueNotifier(null);
+  final ValueNotifier<TfAsyncProgressButtonStates> buttonStateNotifier =
+      ValueNotifier(TfAsyncProgressButtonStates.yetToInit);
 
   Future Function()? get onButtonPressedCallback {
-    if (actionStateNotifier.value == TfActionStatus.yetToInit) {
-      return action;
+    if (buttonState == TfAsyncProgressButtonStates.yetToInit) {
+      return onActionInit;
+    } else if (buttonState == TfAsyncProgressButtonStates.completed) {
+      return onUndoActionInit;
     }
     return null;
   }
 
+  Future<dynamic> onActionInit() async {
+    assert(buttonState == TfAsyncProgressButtonStates.yetToInit);
+    // put the button in progress state
+    buttonState = TfAsyncProgressButtonStates.inProgress;
+    final result = await action.call();
+    // put the button in progress state
+    buttonState = TfAsyncProgressButtonStates.completed;
+    return result;
+  }
+
+  Future<dynamic> onUndoActionInit() async {
+    assert(buttonState == TfAsyncProgressButtonStates.completed);
+    // put the button in progress state
+    buttonState = TfAsyncProgressButtonStates.inProgress;
+    final result = await action.call();
+    // put the button in progress state
+    buttonState = TfAsyncProgressButtonStates.yetToInit;
+    return result;
+  }
+
+  set buttonState(TfAsyncProgressButtonStates updatedState) {
+    buttonStateNotifier.value = updatedState;
+  }
+
+  TfAsyncProgressButtonStates get buttonState {
+    return buttonStateNotifier.value;
+  }
+
   Widget get childWidget {
-    return const SizedBox();
+    switch (buttonStateNotifier.value) {
+      case TfAsyncProgressButtonStates.yetToInit:
+        return actionInitButtonChild;
+      case TfAsyncProgressButtonStates.inProgress:
+        return actionInProgressButtonChild;
+      case TfAsyncProgressButtonStates.completed:
+        return actionDoneButtonChild;
+    }
   }
 
   ButtonStyle? get buttonStyle {
     ButtonStyle? styleToShow;
+    switch (buttonStateNotifier.value) {
+      case TfAsyncProgressButtonStates.yetToInit:
+        styleToShow = actionInitButtonStyle;
+        break;
+      case TfAsyncProgressButtonStates.inProgress:
+        styleToShow = actionInProgressButtonStyle;
+        break;
+      case TfAsyncProgressButtonStates.completed:
+        styleToShow = actionDoneButtonStyle;
+        break;
+    }
     // return the style appending size constraints
     return styleToShow?.copyWith(
       fixedSize: ButtonStyleButton.allOrNull<Size>(size),
