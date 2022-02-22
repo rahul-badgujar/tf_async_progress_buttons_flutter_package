@@ -45,42 +45,112 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            TfAsyncProgressElevatedButton(
-              action: connectToServer,
-              undoAction: connectToServer,
-              actionInitButtonChild: const Text('Connect'),
-              actionInProgressButtonChild: const Padding(
-                padding: EdgeInsets.all(8.0),
-                child: AspectRatio(
-                  aspectRatio: 1,
-                  child: CircularProgressIndicator(),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                TfAsyncProgressElevatedButton(
+                  action: connectToServer,
+                  undoAction: connectToServer,
+                  actionInitButtonChild: const Text('Connect'),
+                  actionInProgressButtonChild: const Text('Connecting...'),
+                  actionCompleteButtonChild: const Text('Disconnect'),
+                  size: const Size(120, 40),
+                  actionInitButtonStyle: ButtonStyle(
+                    backgroundColor:
+                        MaterialStateProperty.all<Color>(Colors.green),
+                  ),
+                  actionInProgressButtonStyle: ButtonStyle(
+                    backgroundColor:
+                        MaterialStateProperty.all<Color>(Colors.amber),
+                  ),
+                  actionDoneButtonStyle: ButtonStyle(
+                    backgroundColor:
+                        MaterialStateProperty.all<Color>(Colors.red),
+                  ),
+                  onActionResulted: (result, isError) {
+                    if (isError) {
+                      print('Error in action: $result');
+                    } else {
+                      print('Result in action: $result');
+                    }
+                  },
+                  onUndoActionResulted: (result, isError) {
+                    if (isError) {
+                      print('Error in undo action: $result');
+                    } else {
+                      print('Result in undo action: $result');
+                    }
+                  },
                 ),
-              ),
-              actionCompleteButtonChild: const Text('Disconnect'),
-              size: const Size(120, 40),
-              actionInitButtonStyle: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all<Color>(Colors.green),
-              ),
-              actionInProgressButtonStyle: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all<Color>(Colors.grey),
-              ),
-              actionDoneButtonStyle: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all<Color>(Colors.red),
-              ),
-              onActionResulted: (result, isError) {
-                if (isError) {
-                  print('Error in action: $result');
-                } else {
-                  print('Result in action: $result');
-                }
-              },
-              onUndoActionResulted: (result, isError) {
-                if (isError) {
-                  print('Error in undo action: $result');
-                } else {
-                  print('Result in undo action: $result');
-                }
-              },
+                TfAsyncProgressTextButton(
+                  action: connectToServer,
+                  undoAction: connectToServer,
+                  actionInitButtonChild: const Text('Connect'),
+                  actionInProgressButtonChild: const Text('Connecting...'),
+                  actionCompleteButtonChild: const Text('Disconnect'),
+                  size: const Size(120, 40),
+                  actionInitButtonStyle: ButtonStyle(
+                    foregroundColor:
+                        ButtonStyleButton.allOrNull<Color>(Colors.green),
+                  ),
+                  actionInProgressButtonStyle: ButtonStyle(
+                    foregroundColor:
+                        ButtonStyleButton.allOrNull<Color>(Colors.amber),
+                  ),
+                  actionDoneButtonStyle: ButtonStyle(
+                    foregroundColor:
+                        ButtonStyleButton.allOrNull<Color>(Colors.red),
+                  ),
+                  onActionResulted: (result, isError) {
+                    if (isError) {
+                      print('Error in action: $result');
+                    } else {
+                      print('Result in action: $result');
+                    }
+                  },
+                  onUndoActionResulted: (result, isError) {
+                    if (isError) {
+                      print('Error in undo action: $result');
+                    } else {
+                      print('Result in undo action: $result');
+                    }
+                  },
+                ),
+                TfAsyncProgressOutlinedButton(
+                  action: connectToServer,
+                  undoAction: connectToServer,
+                  actionInitButtonChild: const Text('Connect'),
+                  actionInProgressButtonChild: const Text('Connecting...'),
+                  actionCompleteButtonChild: const Text('Disconnect'),
+                  size: const Size(120, 40),
+                  actionInitButtonStyle: ButtonStyle(
+                    foregroundColor:
+                        ButtonStyleButton.allOrNull<Color>(Colors.green),
+                  ),
+                  actionInProgressButtonStyle: ButtonStyle(
+                    foregroundColor:
+                        ButtonStyleButton.allOrNull<Color>(Colors.amber),
+                  ),
+                  actionDoneButtonStyle: ButtonStyle(
+                    foregroundColor:
+                        ButtonStyleButton.allOrNull<Color>(Colors.red),
+                  ),
+                  onActionResulted: (result, isError) {
+                    if (isError) {
+                      print('Error in action: $result');
+                    } else {
+                      print('Result in action: $result');
+                    }
+                  },
+                  onUndoActionResulted: (result, isError) {
+                    if (isError) {
+                      print('Error in undo action: $result');
+                    } else {
+                      print('Result in undo action: $result');
+                    }
+                  },
+                ),
+              ],
             ),
           ],
         ),
@@ -91,7 +161,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Future<int> connectToServer() async {
     final task = Future.delayed(const Duration(seconds: 2));
     await task;
-    final randInt = Random().nextInt(3);
+    final randInt = Random().nextInt(5);
     if (randInt == 0) {
       throw Exception('Manually generated error for testing');
     }
