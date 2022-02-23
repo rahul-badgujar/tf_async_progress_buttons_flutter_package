@@ -1,6 +1,6 @@
 # tf_async_progress_buttons
 
-
+Provides buttons to perform asynchronous tasks with support for all Flutter Framework Buttons. Styles and child widgets for different phases of async tasks viz., Beginning, Progressing, Completion can be configured. Also fascilate undo action to be specified. Supports results and errors handling.
 
 ## Supported Dart Versions
 
@@ -14,7 +14,7 @@ Add the Package
 
 ```yaml
 dependencies:
-  tf_async_progress_dialog: ^1.0.0
+  tf_async_progress_buttons: ^1.0.0
 ```
 
 ## How to use
@@ -22,68 +22,77 @@ dependencies:
 Import the package in your dart file
 
 ```dart
-import 'package:tf_async_progress_dialog/tf_async_progress_dialog.dart';
+import 'package:tf_async_progress_buttons/tf_async_progress_button.dart';
 ```
 
-### **Using TfAsyncProgressDialog**
+### **To add Elevated Button for Async Task with Undo Async Task**
 
 ```dart
-// Asynchronous Task to show progress dialog for
-Future<bool> demoProcess() async {
-    final task = Future.delayed(const Duration(seconds: 3));
-    await task;
-    // for exception handling demo
-    final shouldThrowError = Random().nextInt(3) == 0;
-    if (shouldThrowError) {
-    throw "demo error";
-    }
-    return true;
-}
+TfAsyncProgressElevatedButton(
+    action: () async {
+        // specify your async task here as action.
+        // this callback will be executed when button will be clicked.
 
-// Show progress dialog using showAsyncProgressDialog function
-await showAsyncProgressDialog(
-    context: context,
-    dialog: TfAsyncProgressDialog<bool>(
-        demoProcess,
-        message: const Text('In progress...'),
-        progress: AspectRatio(
-        aspectRatio: 1.0,
-        child: Image.asset(
-                'assets/gif/loading.gif',
-            ),
-        ),
-        decoration: BoxDecoration(
-        color: Colors.white,
-        shape: BoxShape.rectangle,
-        borderRadius: BorderRadius.circular(15),
-        ),
-    ),
-);
+        // async code here to connnect to the server
 
-// To handle the exception that might get thrown in the async task, wrap around try...catch block
-try {
-    final result = await showAsyncProgressDialog(
-    context: context,
-    dialog: TfAsyncProgressDialog<bool>(
-        demoProcess,
-        message: const Text('In progress...'),
-        progress: AspectRatio(
-            aspectRatio: 1.0,
-            child: Image.asset(
-                'assets/gif/loading.gif',
-            ),
-        ),
-        decoration: BoxDecoration(
-            color: Colors.white,
-            shape: BoxShape.rectangle,
-            borderRadius: BorderRadius.circular(15),
-        ),
+        // return result if any
+    }, 
+    undoAction: () async {
+        // specify reverse async task of action here.
+        // this callback will be executed when button will be clicked for undo-ing the action. 
+
+        // async code here to disconnect from the server
+
+        // return result if any
+    }, 
+    size: const Size(120, 40),
+    // specify different widget to show for different phases of an async task
+    actionInitButtonChild: const Text('Connect'),
+    actionInProgressButtonChild: const Text('Connecting...'),
+    actionCompleteButtonChild: const Text('Disconnect'),
+    // specify different button styles button should have for different phases of an async task
+    actionInitButtonStyle: ButtonStyle(
+        backgroundColor:
+            MaterialStateProperty.all<Color>(Colors.green),
     ),
-    );
-    ScaffoldMessenger.of(context)
-        .showSnackBar(SnackBar(content: Text('Success: $result')));
-} catch (e) {
-    ScaffoldMessenger.of(context)
-        .showSnackBar(SnackBar(content: Text('Failed: $e')));
-}
+    actionInProgressButtonStyle: ButtonStyle(
+        backgroundColor:
+            MaterialStateProperty.all<Color>(Colors.amber),
+    ),
+    actionDoneButtonStyle: ButtonStyle(
+        backgroundColor:
+            MaterialStateProperty.all<Color>(Colors.red),
+    ),
+    // handlers to handle results and errors
+    onActionResulted: (result, isError) {
+        if (isError) {
+            print('Error in action: $result');
+        } else {
+            print('Result in action: $result');
+        }
+    },
+    onUndoActionResulted: (result, isError) {
+        if (isError) {
+            print('Error in undo action: $result');
+        } else {
+            print('Result in undo action: $result');
+        }
+    },
+),
+```
+
+### **To add Text Button for Async Task with Undo Async Task**
+
+```dart
+TfAsyncProgressTextButton(
+    // specify button parameters here similar to TfAsyncProgressElevatedButton
+)
+```
+
+### **To add Outlined Button for Async Task with Undo Async Task**
+
+```dart
+TfAsyncProgressOutlinedButton(
+    // specify button parameters here similar to TfAsyncProgressElevatedButton
+)
 ```

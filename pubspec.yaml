@@ -1,5 +1,5 @@
 name: tf_async_progress_buttons
-description: A new Flutter package project.
+description: Provides buttons to perform asynchronous tasks. Styles and child widgets for different phases of async tasks viz., Beginning, Progressing, Completion can be configured. Also fascilate undo action to be specified. Supports results and errors handling.
 version: 1.0.0
 homepage: https://github.com/rahul-badgujar/tf_async_progress_button_flutter_package.git
 
