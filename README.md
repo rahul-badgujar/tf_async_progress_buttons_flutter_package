@@ -1,39 +1,89 @@
-<!-- 
-This README describes the package. If you publish this package to pub.dev,
-this README's contents appear on the landing page for your package.
+# tf_async_progress_buttons
 
-For information about how to write a good package README, see the guide for
-[writing package pages](https://dart.dev/guides/libraries/writing-package-pages). 
 
-For general information about developing packages, see the Dart guide for
-[creating packages](https://dart.dev/guides/libraries/create-library-packages)
-and the Flutter guide for
-[developing packages and plugins](https://flutter.dev/developing-packages). 
--->
 
-TODO: Put a short description of the package here that helps potential users
-know whether this package might be useful for them.
+## Supported Dart Versions
 
-## Features
+**Dart SDK version ">=2.15.1 <3.0.0"**
 
-TODO: List what your package can do. Maybe include images, gifs, or videos.
+**Flutter SDK version ">=1.17.0"**
 
-## Getting started
+## Installation
 
-TODO: List prerequisites and provide or point to information on how to
-start using the package.
+Add the Package
 
-## Usage
-
-TODO: Include short and useful examples for package users. Add longer examples
-to `/example` folder. 
-
-```dart
-const like = 'sample';
+```yaml
+dependencies:
+  tf_async_progress_dialog: ^1.0.0
 ```
 
-## Additional information
+## How to use
 
-TODO: Tell users more about the package: where to find more information, how to 
-contribute to the package, how to file issues, what response they can expect 
-from the package authors, and more.
+Import the package in your dart file
+
+```dart
+import 'package:tf_async_progress_dialog/tf_async_progress_dialog.dart';
+```
+
+### **Using TfAsyncProgressDialog**
+
+```dart
+// Asynchronous Task to show progress dialog for
+Future<bool> demoProcess() async {
+    final task = Future.delayed(const Duration(seconds: 3));
+    await task;
+    // for exception handling demo
+    final shouldThrowError = Random().nextInt(3) == 0;
+    if (shouldThrowError) {
+    throw "demo error";
+    }
+    return true;
+}
+
+// Show progress dialog using showAsyncProgressDialog function
+await showAsyncProgressDialog(
+    context: context,
+    dialog: TfAsyncProgressDialog<bool>(
+        demoProcess,
+        message: const Text('In progress...'),
+        progress: AspectRatio(
+        aspectRatio: 1.0,
+        child: Image.asset(
+                'assets/gif/loading.gif',
+            ),
+        ),
+        decoration: BoxDecoration(
+        color: Colors.white,
+        shape: BoxShape.rectangle,
+        borderRadius: BorderRadius.circular(15),
+        ),
+    ),
+);
+
+// To handle the exception that might get thrown in the async task, wrap around try...catch block
+try {
+    final result = await showAsyncProgressDialog(
+    context: context,
+    dialog: TfAsyncProgressDialog<bool>(
+        demoProcess,
+        message: const Text('In progress...'),
+        progress: AspectRatio(
+            aspectRatio: 1.0,
+            child: Image.asset(
+                'assets/gif/loading.gif',
+            ),
+        ),
+        decoration: BoxDecoration(
+            color: Colors.white,
+            shape: BoxShape.rectangle,
+            borderRadius: BorderRadius.circular(15),
+        ),
+    ),
+    );
+    ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBar(content: Text('Success: $result')));
+} catch (e) {
+    ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBar(content: Text('Failed: $e')));
+}
+```

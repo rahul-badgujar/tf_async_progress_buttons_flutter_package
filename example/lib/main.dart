@@ -3,7 +3,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:tf_async_progress_button/tf_async_progress_button.dart';
+import 'package:tf_async_progress_buttons/tf_async_progress_button.dart';
 
 void main() {
   runApp(const MyApp());
